@@ -2,6 +2,7 @@ import httpx
 from selectolax.parser import HTMLParser
 from dataclasses import dataclass
 from rich import print
+import asyncio
 
 
 @dataclass
@@ -65,6 +66,20 @@ def check_url_text(value):
     else:
         return value
 
+# these functions enable the first stage of the async code
+# async def async_get_data(client, url):
+#     resp = await client.get(url)
+#     html = HTMLParser(resp.text)
+#     print(detail_page_new(html))
+
+
+# async def with_async(links):
+#     async with httpx.AsyncClient() as client:
+#         tasks = []
+#         for link in links:
+#             tasks.append(async_get_data(client, link))
+#         return await asyncio.gather(*tasks)
+
 
 def main():
     results = []
@@ -73,10 +88,12 @@ def main():
     client = httpx.Client()
     while True:
         data = get_page(client, url)
-        print(data)
-        detail_links = parse_links(data.body_html)
-        for link in detail_links:
-            product_page_data = get_page(client, base_url + check_url_text(link))
+        links = [base_url + check_url_text(link) for link in parse_links(data.body_html)]
+        # run the async functions
+        # asyncio.run(with_async(links))
+
+        for link in links:
+            product_page_data = get_page(client, link)
             book_item = detail_page_new(product_page_data.body_html)
             results.append(book_item)
             print(book_item)

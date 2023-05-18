@@ -105,6 +105,7 @@ async def get_detail(urls):
             )
         return await asyncio.gather(*tasks)
 
+
 def main():
     links = asyncio.run(get_links())
     detail_links = []
@@ -114,5 +115,6 @@ def main():
     details = asyncio.run(get_detail(detail_links))
     print(len(details))
 
+
 if __name__ == "__main__":
-   main() 
+    main()
